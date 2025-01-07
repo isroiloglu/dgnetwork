@@ -1,6 +1,12 @@
+import 'dart:developer';
+
+import 'package:dgnetwork/core/const.dart';
+import 'package:dgnetwork/ui/screens/auth_screen.dart';
+import 'package:dgnetwork/ui/screens/bottom_nav_bar_page.dart';
 import 'package:dgnetwork/ui/screens/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -10,6 +16,14 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  late Box _box;
+
+  @override
+  void initState() {
+    _box = Hive.box('myBox');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -65,13 +79,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     const SizedBox(height: 32),
                     GestureDetector(
                       onTap: () {
-                        ///ontap
-                        Navigator.pushReplacement(
+                        phone = _box.get('phone', defaultValue: '');
+                        log('===== READ DATA IS $phone');
+                        if (phone == '') {
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const HomeScreen(),
+                              builder: (context) => const AuthScreen(),
                             ),
-                            );
+                          );
+                        } else {
+                          userName = _box.get('username');
+                          name = _box.get('name');
+                          address = _box.get('address');
+                          profession = _box.get('profession');
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const BottomNavBarPage(),
+                            ),
+                          );
+                        }
                       },
                       child: Container(
                         width: 247,

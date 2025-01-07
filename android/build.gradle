@@ -12,6 +12,7 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(":app")
 }
+///Users/sayfullohismoilov/StudioProjects/DGNetwork/dgnetwork
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir

@@ -2,7 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Post extends StatefulWidget {
-  const Post({super.key});
+  const Post(
+      {super.key,
+      required this.author,
+      required this.author_username,
+      required this.created_at,
+      required this.body,
+      required this.likesCount});
+
+  final String author;
+  final String author_username;
+  final String created_at;
+  final String body;
+  final int likesCount;
 
   @override
   State<Post> createState() => _PostState();
@@ -13,12 +25,15 @@ class _PostState extends State<Post> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      margin: EdgeInsets.symmetric(vertical: 8,),
+      margin: EdgeInsets.symmetric(
+        vertical: 8,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 11.5),
@@ -39,15 +54,15 @@ class _PostState extends State<Post> {
                       ),
                     ),
                     const SizedBox(width: 11),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Ola Max',
+                          widget.author,
                           style: TextStyle(fontSize: 16),
                         ),
                         Text(
-                          '10 mins ago',
+                          widget.created_at,
                           style: TextStyle(
                             fontSize: 16,
                             color: Color(0xff646464),
@@ -67,12 +82,20 @@ class _PostState extends State<Post> {
             ),
           ),
           SizedBox(height: 12),
-          Image.network(
-            'https://images.unsplash.com/photo-1735507582615-0321c88f6dbb?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            height: 186,
-            fit: BoxFit.cover,
-            width: double.infinity,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              widget.body,
+              textAlign: TextAlign.start,
+              style: TextStyle(fontSize: 16),
+            ),
           ),
+          // Image.network(
+          //   'https://images.unsplash.com/photo-1735507582615-0321c88f6dbb?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          //   height: 186,
+          //   fit: BoxFit.cover,
+          //   width: double.infinity,
+          // ),
           SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -84,7 +107,7 @@ class _PostState extends State<Post> {
                     height: 20,
                     width: 20,
                   ),
-                  Text('90'),
+                  Text(widget.likesCount.toString()),
                 ],
               ),
               Column(
@@ -94,7 +117,7 @@ class _PostState extends State<Post> {
                     height: 20,
                     width: 20,
                   ),
-                  Text('3'),
+                  Text('0'),
                 ],
               ),
               Column(
@@ -104,7 +127,7 @@ class _PostState extends State<Post> {
                     height: 20,
                     width: 20,
                   ),
-                  Text('10'),
+                  Text('0'),
                 ],
               ),
             ],

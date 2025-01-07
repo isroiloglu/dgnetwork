@@ -1,5 +1,9 @@
+import 'package:dgnetwork/core/const.dart';
+import 'package:dgnetwork/ui/screens/bottom_nav_bar_page.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -9,6 +13,9 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
+  DatabaseReference ref = FirebaseDatabase.instance.ref("posts/").push();
+  TextEditingController controllerPost = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,16 +52,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ),
                 ),
                 const SizedBox(width: 6),
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Alexandar Simonic',
-                      style: TextStyle(fontSize: 16),
+                      name,
+                      style: const TextStyle(fontSize: 16),
                     ),
                     Text(
-                      '@maria_looper',
-                      style: TextStyle(
+                      '@$userName',
+                      style: const TextStyle(
                         fontSize: 12,
                         color: Color(0xff646464),
                         fontWeight: FontWeight.w400,
@@ -64,15 +71,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 )
               ],
             ),
-            const TextField(
+            TextField(
               keyboardType: TextInputType.multiline,
               maxLines: null,
-              decoration: InputDecoration(
+              controller: controllerPost,
+              decoration: const InputDecoration(
                   hintText: 'What do you want to talk about?',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -80,37 +88,60 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   children: [
                     GestureDetector(
                       onTap: () {},
-                      child: Icon(
+                      child: const Icon(
                         CupertinoIcons.photo,
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     GestureDetector(
                       onTap: () {},
-                      child: Icon(
+                      child: const Icon(
                         CupertinoIcons.camera,
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     GestureDetector(
                       onTap: () {},
-                      child: Icon(
+                      child: const Icon(
                         CupertinoIcons.smiley,
                         color: Colors.grey,
                       ),
                     ),
                   ],
                 ),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                      color: Color(0xff3873E9),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Text(
-                    'Publish',
-                    style: TextStyle(color: Colors.white),
+                GestureDetector(
+                  onTap: () async {
+                    if (controllerPost.text.isNotEmpty) {
+                      await ref.set({
+                        "author": name,
+                        "author_userName": userName,
+                        "body": controllerPost.text,
+                        "likes_count": 0,
+                        "commentaries": [],
+                        "created_at": DateFormat('HH:mm, MMM d yyyy')
+                            .format(DateTime.now())
+                      });
+
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (BuildContext context) =>
+                                BottomNavBarPage(),
+                          ),
+                          (Route<dynamic> route) => false);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        color: const Color(0xff3873E9),
+                        borderRadius: BorderRadius.circular(8)),
+                    child: const Text(
+                      'Publish',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 )
               ],

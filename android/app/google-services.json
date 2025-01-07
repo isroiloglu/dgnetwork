@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "646595220754",
+    "project_id": "dgnetwork-f4960",
+    "storage_bucket": "dgnetwork-f4960.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:646595220754:android:e00983f32c00b5c7f84fcb",
+        "android_client_info": {
+          "package_name": "com.example.dgnetwork"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQi4P6lMwFqlKSH8-ZfaQpnZKZ6G1b_0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

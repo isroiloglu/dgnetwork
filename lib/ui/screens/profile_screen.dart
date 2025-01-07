@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:dgnetwork/core/const.dart';
 import 'package:dgnetwork/ui/widgets/post.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +14,35 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  DatabaseReference ref = FirebaseDatabase.instance.ref('posts/');
+  List<String> authors = [];
+  List<String> authorsUsernames = [];
+  List<String> bodies = [];
+  List<String> createdAT = [];
+  List<int> likes = [];
+
+  @override
+  void initState() {
+    ref.onValue.listen((DatabaseEvent event) {
+      setState(() {
+        for (final child in event.snapshot.children) {
+          log('==DATA IS ${child.value}');
+          final map = child.value as Map;
+          if (map['author_userName'] == userName) {
+            authors.add(map['author']);
+            authorsUsernames.add(map['author_userName']);
+            bodies.add(map['body']);
+            createdAT.add(map['created_at']);
+            likes.add(map['likes_count']);
+          }
+        }
+      });
+    }, onError: (error) {
+      // Error.
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -77,32 +110,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
                     ),
                     const SizedBox(width: 16),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Alexandar Simonic',
-                          style: TextStyle(fontSize: 16),
+                          name,
+                          style: const TextStyle(fontSize: 16),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
-                          '3D artist, Visual designer ',
-                          style: TextStyle(
+                          profession,
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xff646464),
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.location_on_outlined,
                               color: Color(0xff646464),
                               size: 18,
                             ),
                             Text(
-                              'Toshkent, Uzbekistan',
-                              style: TextStyle(
+                              address,
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Color(0xff646464),
                               ),
@@ -122,21 +155,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     border: Border.all(color: Colors.white),
                     borderRadius: BorderRadius.circular(28),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Column(
                         children: [
                           Text(
-                            '57',
+                            authors.length.toString(),
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(height: 6),
                           Text(
                             'Posts',
-                            style:
-                                TextStyle(fontSize: 12, color: Color(0xff646464)),
+                            style: TextStyle(
+                                fontSize: 12, color: Color(0xff646464)),
                           ),
                         ],
                       ),
@@ -150,8 +183,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           SizedBox(height: 6),
                           Text(
                             'Follower',
-                            style:
-                                TextStyle(fontSize: 12, color: Color(0xff646464)),
+                            style: TextStyle(
+                                fontSize: 12, color: Color(0xff646464)),
                           ),
                         ],
                       ),
@@ -165,25 +198,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           SizedBox(height: 6),
                           Text(
                             'Following',
-                            style:
-                                TextStyle(fontSize: 12, color: Color(0xff646464)),
+                            style: TextStyle(
+                                fontSize: 12, color: Color(0xff646464)),
                           ),
-          
                         ],
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 ListView.builder(
                   shrinkWrap: true,
-                  itemCount: 4,
+                  reverse: true,
+                  itemCount: authors.length,
                   itemBuilder: (context, i) {
                     return GestureDetector(
                         onTap: () {
                           Navigator.pop(context);
                         },
-                        child: const Post());
+                        child: Post(
+                          author: authors[i],
+                          body: bodies[i],
+                          author_username: authorsUsernames[i],
+                          created_at: createdAT[i],
+                          likesCount: likes[i],
+                        ));
                   },
                 )
               ],

@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:dgnetwork/core/const.dart';
 import 'package:dgnetwork/ui/widgets/post.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +14,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  DatabaseReference ref = FirebaseDatabase.instance.ref('posts/');
+  List<String> authors = [];
+  List<String> authorsUsernames = [];
+  List<String> bodies = [];
+  List<String> createdAT = [];
+  List<int> likes = [];
+
+  @override
+  void initState() {
+    ref.onValue.listen((DatabaseEvent event) {
+      if (mounted) {
+        setState(() {
+          for (final child in event.snapshot.children) {
+            log('==DATA IS ${child.value}');
+            final map = child.value as Map;
+            authors.add(map['author']);
+            authorsUsernames.add(map['author_userName']);
+            bodies.add(map['body']);
+            createdAT.add(map['created_at']);
+            likes.add(map['likes_count']);
+          }
+        });
+      }
+    }, onError: (error) {
+      // Error.
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,16 +66,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(width: 6),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Good morning, Alexander!',
-                    style: TextStyle(fontSize: 16),
+                    'Good morning, $name!',
+                    style: const TextStyle(fontSize: 16),
                   ),
                   Text(
-                    '@maria_looper',
-                    style: TextStyle(
+                    '@$userName',
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Color(0xff646464),
                       fontWeight: FontWeight.w400,
@@ -73,18 +107,23 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: ListView.builder(
           shrinkWrap: true,
-          itemCount: 4,
+          reverse: true,
+          itemCount: authors.length,
           itemBuilder: (context, i) {
             return GestureDetector(
-                onTap: () {
-                },
-                child: const Padding(
+                onTap: () {},
+                child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Post(),
+                  child: Post(
+                    author: authors[i],
+                    body: bodies[i],
+                    author_username: authorsUsernames[i],
+                    created_at: createdAT[i],
+                    likesCount: likes[i],
+                  ),
                 ));
           },
         ),
-
       ),
     );
   }
